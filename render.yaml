@@ -1,0 +1,47 @@
+# Render Blueprint — lets Render read this file and set up the service,
+# persistent disk, and environment variable prompts in one pass, instead of
+# you configuring each field by hand in the dashboard.
+#
+# This uses the paid "starter" plan (~$7/month) plus a small 1GB disk
+# (~$0.25/month) rather than the free tier. Reason: Render's free web
+# services use ephemeral storage — the SQLite database (bookings, admin
+# login, site settings) can be wiped on redeploy or restart without a
+# persistent disk, and free tier doesn't support attaching one. For a site
+# that's actually taking real customer bookings, that trade-off isn't worth
+# the ~$7/month saved. If you'd rather start on the free tier and accept
+# that risk (fine for just trying things out), delete the "disk:" block
+# below and change "plan: starter" to "plan: free" before deploying.
+
+services:
+  - type: web
+    name: alex-makeover
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: npm install
+    startCommand: npm start
+    disk:
+      name: alex-makeover-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
+    envVars:
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: ADMIN_NOTIFY_EMAILS
+        value: ankitsriveas080@gmail.com,ashish.raman.iti@gmail.com
+      - key: BUSINESS_WHATSAPP_NUMBER
+        value: "919120807102"
+      - key: BUSINESS_PHONE_DISPLAY
+        value: "+91 91208 07102"
+      - key: WHATSAPP_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
